@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Test - 過去問学習ツール</title>
+    <!-- あとでCSSファイルへのリンクをここに追加します -->
+    <!-- <link rel="stylesheet" href="style.css"> -->
+    <style>
+        /* 簡単なスタイルを仮で入れています */
+        body { font-family: sans-serif; background-color: #f4f4f9; color: #333; max-width: 800px; margin: 20px auto; padding: 20px; }
+        .hidden { display: none; }
+        .card { background-color: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        textarea { width: 98%; padding: 10px; border-radius: 4px; border: 1px solid #ccc; font-size: 16px; margin-top: 10px; }
+        button { background-color: #007bff; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; margin-right: 10px; }
+        button:hover { background-color: #0056b3; }
+        .explanation, .hint, .ai-advice { border-left: 4px solid #ccc; padding-left: 15px; margin-top: 15px; background-color: #f9f9f9; }
+    </style>
+</head>
+<body>
+
+    <h1>測量士試験 過去問学習</h1>
+
+    <!-- 問題カードのコンテナ -->
+    <div id="quiz-container">
+        <!-- JavaScriptによって問題がここに挿入されます -->
+    </div>
+
+    <!-- 問題カードのテンプレート -->
+    <template id="quiz-card-template">
+        <div class="card">
+            <!-- 問題タイトルとジャンル -->
+            <h2 id="q-title" class="text-xl font-bold"></h2>
+            <p id="q-genre" class="text-sm text-gray-500 mb-4"></p>
+            
+            <!-- 問題文と図 -->
+            <div class="question-content">
+                <p id="q-text"></p>
+                <img id="q-image" class="mt-4" style="display:none; max-width: 100%;">
+            </div>
+
+            <!-- 自分の解答入力欄 -->
+            <div class="my-answer-area mt-4">
+                <label for="user-answer-textarea" class="font-bold">あなたの解答</label>
+                <textarea id="user-answer-textarea" rows="5" placeholder="計算過程や記述解答をここに書き込んでみましょう..."></textarea>
+            </div>
+            
+            <!-- 操作ボタン群 -->
+            <div class="action-buttons mt-6">
+                <button class="hint-btn">ヒント</button>
+                <button class="answer-btn">模範解答</button>
+                <button class="ai-btn">AIに相談</button>
+                <button class="memo-btn">私のメモ</button>
+            </div>
+
+            <!-- 表示/非表示エリア -->
+            <div id="hint-content" class="hint hidden"></div>
+            <div id="answer-content" class="explanation hidden"></div>
+            <div id="ai-advice-content" class="ai-advice hidden">AIからのアドバイスがここに表示されます。</div>
+            <div id="memo-content" class="memo hidden">
+                <textarea class="memo-textarea" rows="5" placeholder="この問題に関する自分だけの気づきを記録..."></textarea>
+                <button class="save-memo-btn mt-2">メモを保存</button>
+            </div>
+        </div>
+    </template>
+
+    <!-- ページナビゲーション（あとで実装）-->
+    <div class="navigation mt-6">
+        <button id="prev-btn">前の問題</button>
+        <button id="next-btn">次の問題</button>
+    </div>
+
+    <!-- JavaScriptファイルを読み込み -->
+    <script src="questions.js"></script>
+    <script src="script.js"></script>
+
+</body>
+</html>
