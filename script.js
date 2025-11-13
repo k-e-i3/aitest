@@ -7,6 +7,23 @@ const prevBtn = document.getElementById('prev-btn');
 const nextBtn = document.getElementById('next-btn');
 let currentQuestionIndex = 0;
 
+// 各ファイルで `questions_r7_no1` のような変数名で問題配列を定義すると仮定
+let allQuestions = [];
+
+// window.onload など、アプリの初期化時に実行
+function initialize() {
+    // 存在する問題データ配列をすべて結合する
+    if (typeof questions_r7_no1 !== 'undefined') allQuestions = allQuestions.concat(questions_r7_no1);
+    if (typeof questions_r7_no2 !== 'undefined') allQuestions = allQuestions.concat(questions_r7_no2);
+    if (typeof questions_r7_no3 !== 'undefined') allQuestions = allQuestions.concat(questions_r7_no3);
+    if (typeof questions_r7_no4 !== 'undefined') allQuestions = allQuestions.concat(questions_r7_no4);
+    if (typeof questions_r7_no5 !== 'undefined') allQuestions = allQuestions.concat(questions_r7_no5);
+    
+    // 最初に最初の問題を表示
+    displayQuestion(0);
+}
+
+
 /**
  * 指定されたインデックスの問題を画面に表示する関数
  * @param {number} index - questions配列のインデックス
