@@ -213,7 +213,7 @@ async function getAIAdvice(question, userAnswer) {
     if (typeof API_KEY === 'undefined' || API_KEY === 'YOUR_GEMINI_API_KEY_HERE') {
         throw new Error("APIキーがconfig.jsに設定されていません。");
     }
-    const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${API_KEY}`;
+    const API_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
     
     let correctAnswerText = '';
     if (question.answer) {
