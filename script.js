@@ -46,14 +46,32 @@ window.onload = () => {
 function initializeQuestions() {
     allQuestions = [];
     if (typeof questions_r7_no1 !== 'undefined') allQuestions = allQuestions.concat(questions_r7_no1);
-    if (typeof questions_r6_no1 !== 'undefined') allQuestions = allQuestions.concat(questions_r6_no1); // ← この行があるか確認
+    if (typeof questions_r6_no1 !== 'undefined') allQuestions = allQuestions.concat(questions_r6_no1);
     if (typeof questions_r5_no1 !== 'undefined') allQuestions = allQuestions.concat(questions_r5_no1);
     if (typeof questions_r4_no1 !== 'undefined') allQuestions = allQuestions.concat(questions_r4_no1);
     if (typeof questions_r3_no1 !== 'undefined') allQuestions = allQuestions.concat(questions_r3_no1);
     
+    // ★デバッグコード追加 ↓
+    console.log('=== デバッグ情報 ===');
+    console.log('questions_r7_no1 exists:', typeof questions_r7_no1 !== 'undefined');
+    console.log('questions_r6_no1 exists:', typeof questions_r6_no1 !== 'undefined');
+    console.log('questions_r5_no1 exists:', typeof questions_r5_no1 !== 'undefined');
+    console.log('Total questions loaded:', allQuestions.length);
+    
     allQuestions.forEach(q => {
         q.normalizedYear = normalizeYear(q.year);
     });
+    
+    // ★年度ごとの問題数を確認 ↓
+    const yearCounts = {};
+    allQuestions.forEach(q => {
+        yearCounts[q.normalizedYear] = (yearCounts[q.normalizedYear] || 0) + 1;
+    });
+    console.log('Questions by year:', yearCounts);
+    
+    const uniqueYears = [...new Set(allQuestions.map(q => q.normalizedYear))];
+    console.log('Unique years:', uniqueYears);
+    // ★デバッグコードここまで
 }
 
 /**
