@@ -43,13 +43,8 @@ window.onload = () => {
 /**
  * 存在する問題データ配列を全て結合する
  */
-
-/**
- * 存在する問題データ配列を全て結合する
- */
 function initializeQuestions() {
     allQuestions = [];
-
     // 読み込むべきデータセットの変数名をここに列挙します
     const datasets = [
         // 令和7年
@@ -79,7 +74,6 @@ function initializeQuestions() {
 
     // 合計が0問の場合、エラーメッセージを表示
     if (allQuestions.length === 0) {
-        // この処理がエラーメッセージの正体です
         return; 
     }
 
@@ -148,15 +142,11 @@ function initializeControlPanel() {
 }
 
 /**
- * 年度に合わせて問題セットの選択肢を更新する (現状はすべて「必須問題」と仮定)
+ * 年度に合わせて問題セットの選択肢を更新する
  */
 function updateSetOptions() {
-    // 現状、すべての問題が「必須問題」なので、基本的にはセットの変更は不要ですが、
-    // 将来的に「選択問題」などが追加された時のためにロジックは残します。
     const selectedYear = yearSelect.value;
     const setsForYear = [...new Set(allQuestions.filter(q => q.normalizedYear === selectedYear).map(q => q.q_set))];
-    
-    // ... セットオプションの生成ロジックは省略または簡易化
     
     // 問題番号を連動して更新
     updateQNumOptions(); 
@@ -186,7 +176,6 @@ function updateQNumOptions() {
     });
 }
 
-
 /**
  * 指定されたインデックスの問題を画面に表示する関数
  */
@@ -210,8 +199,6 @@ function displayQuestion(index) {
         qImage.src = q.question_image;
         qImage.style.display = 'block';
     }
-    
-    // ... (模範解答、ヒント、メモボタン、AIボタン、ナビゲーションボタンのロジックは変更なし) ...
     
     const answerContent = card.querySelector('#answer-content');
     if (q.type && q.type.includes('fill-in-the-blank')) {
@@ -246,7 +233,7 @@ function displayQuestion(index) {
     memoTextarea.value = localStorage.getItem(memoKey) || '';
     saveMemoBtn.addEventListener('click', () => {
         localStorage.setItem(memoKey, memoTextarea.value);
-        alert(`「${q.id}」のメモを保存しました！`);
+        alert(`「${q.id}」のメモを保存しました!`);
         memoContent.classList.add('hidden');
     });
 
@@ -306,10 +293,10 @@ ${correctAnswerText}
 ${userAnswer}
 
 # アドバイスの形式
-1.  まず「素晴らしいですね！」「惜しい！」など、ポジティブな一言で始めます。
-2.  良い点と改善点を、それぞれ具体的に指摘します。
-3.  特に間違っている箇所については、なぜそうなるのかを優しく解説してください。
-4.  最後に、次につながる学習のヒントを簡潔に示してください。`;
+1. まず「素晴らしいですね!」「惜しい!」など、ポジティブな一言で始めます。
+2. 良い点と改善点を、それぞれ具体的に指摘します。
+3. 特に間違っている箇所については、なぜそうなるのかを優しく解説してください。
+4. 最後に、次につながる学習のヒントを簡潔に示してください。`;
 
     const response = await fetch(API_URL, {
         method: 'POST',
