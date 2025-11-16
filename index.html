@@ -32,11 +32,17 @@
         <section class="control-panel card">
             <h2 class="text-lg font-semibold mb-3">問題を選択してください</h2>
             <div class="flex flex-wrap items-center">
-                <select id="year-select"><option>R7</option></select>
-                <select id="set-select"><option>必須問題</option></select>
-                <select id="qnum-select"><option>問A</option></select>
-                <button id="start-btn">この問題から開始</button>
-            </div>
+    <select id="year-select">
+        <option value="R7">R7</option>
+        <option value="R6">R6</option> <!-- R6を追加 -->
+        <option value="R5">R5</option> <!-- R5を追加 -->
+        <option value="R4">R4</option> <!-- R4を追加 -->
+        <option value="R3">R3</option> <!-- R3を追加 -->
+    </select>
+    <select id="set-select"><option>必須問題</option></select>
+    <select id="qnum-select"><option>問A</option></select>
+    <button id="start-btn">この問題から開始</button>
+</div>
         </section>
 
         <main id="quiz-container"></main>
