@@ -43,6 +43,10 @@ window.onload = () => {
 /**
  * 存在する問題データ配列を全て結合する
  */
+
+/**
+ * 存在する問題データ配列を全て結合する
+ */
 function initializeQuestions() {
     allQuestions = [];
 
@@ -62,12 +66,22 @@ function initializeQuestions() {
 
     console.log('=== データセット読み込みログ ===');
     for (const name of datasets) {
+        // window[name] はグローバルスコープにある変数（例: questions_r7_no1）にアクセスする方法です
         if (typeof window[name] !== 'undefined' && Array.isArray(window[name])) {
             allQuestions = allQuestions.concat(window[name]);
             console.log(`- ${name}: 読み込み成功 (${window[name].length}問)`);
+        } else {
+            // このメッセージが表示されたら、そのファイルが読み込めていないか、変数名が間違っています
+            console.warn(`- ${name}: データが見つかりません`); 
         }
     }
     console.log(`合計 ${allQuestions.length} 問の問題を読み込みました。`);
+
+    // 合計が0問の場合、エラーメッセージを表示
+    if (allQuestions.length === 0) {
+        // この処理がエラーメッセージの正体です
+        return; 
+    }
 
     // 各問題に正規化された年度を追加
     allQuestions.forEach(q => {
