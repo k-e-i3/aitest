@@ -27,8 +27,10 @@ window.onload = () => {
 function initializeQuestions() {
     allQuestions = [];
     if (typeof questions_r7_no1 !== 'undefined') allQuestions = allQuestions.concat(questions_r7_no1);
-    // 今後、ここに他の年のデータも追加していく
-    // if (typeof questions_r6_no1 !== 'undefined') allQuestions = allQuestions.concat(questions_r6_no1);
+    if (typeof questions_r6_no1 !== 'undefined') allQuestions = allQuestions.concat(questions_r6_no1);
+    if (typeof questions_r5_no1 !== 'undefined') allQuestions = allQuestions.concat(questions_r5_no1);
+    if (typeof questions_r4_no1 !== 'undefined') allQuestions = allQuestions.concat(questions_r4_no1);
+    if (typeof questions_r3_no1 !== 'undefined') allQuestions = allQuestions.concat(questions_r3_no1); // ★この行を追加
 }
 
 // ----- ★ここからが今回の大幅な追加・修正部分です★ -----
