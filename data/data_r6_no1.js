@@ -67,25 +67,4 @@ const questions_r6_no1 = [
   },
   // ... 以降、問C, Dも同様に追加していきます ...
 ];
-```*（注：問C, Dは複数の小問に分かれているため、後ほど一括でデータ化します。まずはここまでで動作確認をお願いします。）*
 
----
-
-### ステップ2：`index.html` の更新
-
-`<body>` タグの末尾にある `<script>` タグの部分に、新しいファイルへのリンクを**追加**してください。`data_r7_no1.js` の下に追加するのが分かりやすいです。
-
-```html
-<!-- index.html の末尾 -->
-    ...
-
-    <!-- JavaScriptファイルを読み込み -->
-    <script src="config.js"></script>
-    <!-- 問題データ -->
-    <script src="data/data_r7_no1.js"></script>
-    <script src="data/data_r6_no1.js"></script> <!-- ★この行を追加 -->
-    <!-- <script src="data/data_r5_no1.js"></script> -->
-    <!-- アプリ本体のロジック -->
-    <script src="script.js"></script>
-</body>
-</html>
