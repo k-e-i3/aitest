@@ -45,33 +45,34 @@ window.onload = () => {
  */
 function initializeQuestions() {
     allQuestions = [];
-    if (typeof questions_r7_no1 !== 'undefined') allQuestions = allQuestions.concat(questions_r7_no1);
-    if (typeof questions_r6_no1 !== 'undefined') allQuestions = allQuestions.concat(questions_r6_no1);
-    if (typeof questions_r5_no1 !== 'undefined') allQuestions = allQuestions.concat(questions_r5_no1);
-    if (typeof questions_r4_no1 !== 'undefined') allQuestions = allQuestions.concat(questions_r4_no1);
-    if (typeof questions_r3_no1 !== 'undefined') allQuestions = allQuestions.concat(questions_r3_no1);
-    
-    // ★デバッグコード追加 ↓
-    console.log('=== デバッグ情報 ===');
-    console.log('questions_r7_no1 exists:', typeof questions_r7_no1 !== 'undefined');
-    console.log('questions_r6_no1 exists:', typeof questions_r6_no1 !== 'undefined');
-    console.log('questions_r5_no1 exists:', typeof questions_r5_no1 !== 'undefined');
-    console.log('Total questions loaded:', allQuestions.length);
-    
+
+    // 読み込むべきデータセットの変数名をここに列挙します
+    const datasets = [
+        // 令和7年
+        'questions_r7_no1', 'questions_r7_selective',
+        // 令和6年
+        'questions_r6_no1', 'questions_r6_selective',
+        // 令和5年
+        'questions_r5_no1', 'questions_r5_selective',
+        // 令和4年
+        'questions_r4_no1', 'questions_r4_selective',
+        // 令和3年
+        'questions_r3_no1', 'questions_r3_selective',
+    ];
+
+    console.log('=== データセット読み込みログ ===');
+    for (const name of datasets) {
+        if (typeof window[name] !== 'undefined' && Array.isArray(window[name])) {
+            allQuestions = allQuestions.concat(window[name]);
+            console.log(`- ${name}: 読み込み成功 (${window[name].length}問)`);
+        }
+    }
+    console.log(`合計 ${allQuestions.length} 問の問題を読み込みました。`);
+
+    // 各問題に正規化された年度を追加
     allQuestions.forEach(q => {
         q.normalizedYear = normalizeYear(q.year);
     });
-    
-    // ★年度ごとの問題数を確認 ↓
-    const yearCounts = {};
-    allQuestions.forEach(q => {
-        yearCounts[q.normalizedYear] = (yearCounts[q.normalizedYear] || 0) + 1;
-    });
-    console.log('Questions by year:', yearCounts);
-    
-    const uniqueYears = [...new Set(allQuestions.map(q => q.normalizedYear))];
-    console.log('Unique years:', uniqueYears);
-    // ★デバッグコードここまで
 }
 
 /**
