@@ -100,13 +100,23 @@
         <!-- アプリ本体のロジック -->
     <script src="script.js"></script>
 
-
+<script src="script.js"></script>
+    
+    <!-- ここに追加 ↓ -->
+    <div style="background: yellow; padding: 20px; margin: 20px;">
+        <h2>デバッグ情報</h2>
+        <p id="debug-info"></p>
+    </div>
     <script>
-    console.log('=== 変数確認テスト ===');
-    console.log('questions_r7_no1:', typeof questions_r7_no1);
-    console.log('questions_r7_selective:', typeof questions_r7_selective);
-    console.log('questions_r6_no1:', typeof questions_r6_no1);
-</script>
+        const debugInfo = document.getElementById('debug-info');
+        let result = '';
+        result += 'questions_r7_no1: ' + (typeof questions_r7_no1) + '<br>';
+        result += 'questions_r7_selective: ' + (typeof questions_r7_selective) + '<br>';
+        result += 'questions_r6_no1: ' + (typeof questions_r6_no1) + '<br>';
+        result += 'questions_r5_no1: ' + (typeof questions_r5_no1) + '<br>';
+        debugInfo.innerHTML = result;
+    </script>
+    
     
 </body>
 </html>
