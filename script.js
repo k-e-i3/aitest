@@ -45,14 +45,12 @@ window.onload = () => {
  */
 function initializeQuestions() {
     allQuestions = [];
-    // typeofチェックで、ファイルが読み込まれていなくてもエラーにならないようにする
     if (typeof questions_r7_no1 !== 'undefined') allQuestions = allQuestions.concat(questions_r7_no1);
-    if (typeof questions_r6_no1 !== 'undefined') allQuestions = allQuestions.concat(questions_r6_no1);
+    if (typeof questions_r6_no1 !== 'undefined') allQuestions = allQuestions.concat(questions_r6_no1); // ← この行があるか確認
     if (typeof questions_r5_no1 !== 'undefined') allQuestions = allQuestions.concat(questions_r5_no1);
     if (typeof questions_r4_no1 !== 'undefined') allQuestions = allQuestions.concat(questions_r4_no1);
     if (typeof questions_r3_no1 !== 'undefined') allQuestions = allQuestions.concat(questions_r3_no1);
     
-    // 処理を分かりやすくするため、ここで問題データ内のyearを正規化しておく
     allQuestions.forEach(q => {
         q.normalizedYear = normalizeYear(q.year);
     });
