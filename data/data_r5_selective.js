@@ -1,4 +1,4 @@
-const questions_r5_selective = [
+const window.questions_r5_selective = [
   // ----------------------------------------
   // --- 令和5年 選択問題 No.2 ---
   // ----------------------------------------
