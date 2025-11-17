@@ -1,4 +1,4 @@
-const questions_r4_selective = [
+const window.questions_r4_selective = [
   // ----------------------------------------
   // --- 令和4年 選択問題 No.2 ---
   // ----------------------------------------
