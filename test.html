@@ -1,24 +1,57 @@
 <!DOCTYPE html>
 <html>
+<head>
+    <meta charset="UTF--8">
+    <title>デバッグ (R5-R7)</title>
+    <style> p { margin: 5px 0; font-family: monospace; } </style>
+</head>
 <body>
-    <h1>デバッグ中... (2ファイル目)</h1>
-    <div id="result1"></div>
-    <div id="result2"></div>
+    <h1>デバッグ中 (R5, R6, R7)</h1>
+    <div id="results"></div>
 
-    <!-- 1つ目のファイル -->
+    <!-- 令和7年 -->
     <script src="data/data_r7_no1.js"></script>
-    <script>
-        document.getElementById('result1').innerHTML = (typeof questions_r7_no1 !== 'undefined')
-            ? '<p style="color: green;">1. data_r7_no1.js -> 成功</p>'
-            : '<p style="color: red;">1. data_r7_no1.js -> 失敗</p>';
-    </script>
-
-    <!-- 2つ目のファイル -->
     <script src="data/data_r7_selective.js"></script>
+    <!-- 令和6年 -->
+    <script src="data/data_r6_no1.js"></script>
+    <script src="data/data_r6_selective.js"></script>
+    <!-- 令和5年 -->
+    <script src="data/data_r5_no1.js"></script>
+    <script src="data/data_r5_selective.js"></script>
+    
     <script>
-        document.getElementById('result2').innerHTML = (typeof questions_r7_selective !== 'undefined')
-            ? '<p style="color: green;">2. data_r7_selective.js -> 成功</p>'
-            : '<p style="color: red;">2. data_r7_selective.js -> 失敗</p>';
+        const resultsDiv = document.getElementById('results');
+        function check(variableName) {
+            const result = (typeof window[variableName] !== 'undefined');
+            const color = result ? 'green' : 'red';
+            const status = result ? '成功' : '失敗';
+            resultsDiv.innerHTML += `<p style="color: ${color};"><strong>${status}</strong>: ${variableName}</p>`;
+            return result;
+        }
+
+        // 読み込むべきファイルの変数名を順番にチェック
+        const filesToCheck = [
+            'questions_r7_no1',
+            'questions_r7_selective',
+            'questions_r6_no1',
+            'questions_r6_selective',
+            'questions_r5_no1',
+            'questions_r5_selective',
+        ];
+
+        let allSuccess = true;
+        for (const f of filesToCheck) {
+            if (!check(f)) {
+                allSuccess = false;
+                resultsDiv.innerHTML += `<p style="color: red; font-weight: bold;"><strong>→ このファイル (${f}) に問題がある可能性が高いです！</strong></p>`;
+                break; // エラーが見つかった時点で停止
+            }
+        }
+
+        if (allSuccess) {
+            resultsDiv.innerHTML += `<hr><h2 style="color: green;">R5, R6, R7のファイルはすべて正常です！</h2>`;
+        }
+
     </script>
 </body>
 </html>
