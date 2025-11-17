@@ -1,4 +1,4 @@
-const questions_r6_selective = [
+const window.questions_r6_selective = [
   // ----------------------------------------
   // --- 令和6年 選択問題 No.2 ---
   // ----------------------------------------
