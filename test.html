@@ -1,14 +1,24 @@
 <!DOCTYPE html>
 <html>
 <body>
-    <h1>デバッグ 1/3</h1>
-    <p>data/data_r7_no1.js を読み込みます</p>
-    <div id="result"></div>
+    <h1>デバッグ中... (2ファイル目)</h1>
+    <div id="result1"></div>
+    <div id="result2"></div>
+
+    <!-- 1つ目のファイル -->
     <script src="data/data_r7_no1.js"></script>
     <script>
-        document.getElementById('result').innerHTML = (typeof questions_r7_no1 !== 'undefined')
-            ? '<h2 style="color: green;">成功！このパターンです！</h2>'
-            : '<p style="color: red;">失敗...</p>';
+        document.getElementById('result1').innerHTML = (typeof questions_r7_no1 !== 'undefined')
+            ? '<p style="color: green;">1. data_r7_no1.js -> 成功</p>'
+            : '<p style="color: red;">1. data_r7_no1.js -> 失敗</p>';
+    </script>
+
+    <!-- 2つ目のファイル -->
+    <script src="data/data_r7_selective.js"></script>
+    <script>
+        document.getElementById('result2').innerHTML = (typeof questions_r7_selective !== 'undefined')
+            ? '<p style="color: green;">2. data_r7_selective.js -> 成功</p>'
+            : '<p style="color: red;">2. data_r7_selective.js -> 失敗</p>';
     </script>
 </body>
 </html>
