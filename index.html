@@ -31,12 +31,12 @@
 
         <section class="control-panel card">
             <h2 class="text-lg font-semibold mb-3">問題を選択してください</h2>
-<div class="flex flex-wrap items-center">
-    <select id="year-select"></select>  <!-- 空にする -->
-    <select id="set-select"></select>   <!-- 空にする -->
-    <select id="qnum-select"></select>  <!-- 空にする -->
-    <button id="start-btn">この問題から開始</button>
-</div>
+            <div class="flex flex-wrap items-center">
+                <select id="year-select"></select>
+                <select id="set-select"></select>
+                <select id="qnum-select"></select>
+                <button id="start-btn">この問題から開始</button>
+            </div>
         </section>
 
         <main id="quiz-container"></main>
@@ -48,7 +48,6 @@
                         <h2 id="q-title"></h2>
                         <p id="q-genre" class="tags"></p>
                     </div>
-                    <!-- ログ機能は後で追加 -->
                 </div>
                 
                 <div class="question-content">
@@ -97,26 +96,8 @@
     <script src="data/data_r4_selective.js"></script>
     <script src="data/data_r3_no1.js"></script>
     <script src="data/data_r3_selective.js"></script>
-        <!-- アプリ本体のロジック -->
+    <!-- アプリ本体のロジック -->
     <script src="script.js"></script>
-
-<script src="script.js"></script>
-    
-    <!-- ここに追加 ↓ -->
-    <div style="background: yellow; padding: 20px; margin: 20px;">
-        <h2>デバッグ情報</h2>
-        <p id="debug-info"></p>
-    </div>
-    <script>
-        const debugInfo = document.getElementById('debug-info');
-        let result = '';
-        result += 'questions_r7_no1: ' + (typeof questions_r7_no1) + '<br>';
-        result += 'questions_r7_selective: ' + (typeof questions_r7_selective) + '<br>';
-        result += 'questions_r6_no1: ' + (typeof questions_r6_no1) + '<br>';
-        result += 'questions_r5_no1: ' + (typeof questions_r5_no1) + '<br>';
-        debugInfo.innerHTML = result;
-    </script>
-    
     
 </body>
 </html>
