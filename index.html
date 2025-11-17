@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>測量士試験学習ツール</title>
+    <title>aitest - 測量士試験 AI学習ツール</title>
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif; background-color: #f0f2f5; color: #1a202c; margin: 0; }
         .container { max-width: 800px; margin: 20px auto; padding: 0 15px; }
@@ -26,7 +26,7 @@
 
     <div class="container">
         <header class="mb-6">
-            <h1 class="text-3xl font-bold text-center">測量士試験学習ツール</h1>
+            <h1 class="text-3xl font-bold text-center">aitest - 測量士試験 AI学習ツール</h1>
         </header>
 
         <section class="control-panel card">
@@ -83,22 +83,15 @@
         </div>
     </div>
 
-    <!-- JavaScriptファイルを読み込み (すべてに defer を追加) -->
+    <!-- JavaScriptファイルを読み込み -->
     <script src="config.js" defer></script>
 
-    <!-- 問題データ -->
+    <!-- 問題データ (R7の必須問題だけを読み込む) -->
     <script src="data/data_r7_no1.js" defer></script>
-    <script src="data/data_r7_selective.js" defer></script>
-    <script src="data/data_r6_no1.js" defer></script>
-    <script src="data/data_r6_selective.js" defer></script>
-    <script src="data/data_r5_no1.js" defer></script>
-    <script src="data/data_r5_selective.js" defer></script>
-    <script src="data/data_r4_no1.js" defer></script>
-    <script src="data/data_r4_selective.js" defer></script>
-    <script src="data/data_r3_no1.js" defer></script>
-    <script src="data/data_r3_selective.js" defer></script>
     
-    <!-- アプリ本体のロジック (ここにも defer を追加) -->
+    <!-- 他のファイルは読み込まない -->
+    
+    <!-- アプリ本体のロジック -->
     <script src="script.js" defer></script>
 </body>
 </html>
