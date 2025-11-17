@@ -1,57 +1,67 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-    <meta charset="UTF--8">
-    <title>デバッグ (R5-R7)</title>
-    <style> p { margin: 5px 0; font-family: monospace; } </style>
+    <meta charset="UTF-8">
+    <title>【最終デバッグ】1ファイルずつ診断</title>
+    <style>
+        body { font-family: sans-serif; padding: 1em; }
+        .log { margin: 5px 0; padding: 5px; border-left: 4px solid; }
+        .success { border-color: green; background-color: #f0fff0; }
+        .error { border-color: red; background-color: #fff0f0; font-weight: bold; }
+        .info { border-color: #ccc; background-color: #f8f8f8; }
+    </style>
 </head>
 <body>
-    <h1>デバッグ中 (R5, R6, R7)</h1>
+    <h1>1ファイルずつ診断</h1>
     <div id="results"></div>
 
-    <!-- 令和7年 -->
-    <script src="data/data_r7_no1.js"></script>
-    <script src="data/data_r7_selective.js"></script>
-    <!-- 令和6年 -->
-    <script src="data/data_r6_no1.js"></script>
-    <script src="data/data_r6_selective.js"></script>
-    <!-- 令和5年 -->
-    <script src="data/data_r5_no1.js"></script>
-    <script src="data/data_r5_selective.js"></script>
-    
     <script>
-        const resultsDiv = document.getElementById('results');
-        function check(variableName) {
-            const result = (typeof window[variableName] !== 'undefined');
-            const color = result ? 'green' : 'red';
-            const status = result ? '成功' : '失敗';
-            resultsDiv.innerHTML += `<p style="color: ${color};"><strong>${status}</strong>: ${variableName}</p>`;
-            return result;
+        // 非同期でスクリプトを1つずつ読み込む関数
+        function loadScript(src) {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = src;
+                script.onload = () => resolve(src);
+                script.onerror = () => reject(new Error(`ファイルが見つからないか、中身にエラーがあります: ${src}`));
+                document.head.appendChild(script);
+            });
         }
 
-        // 読み込むべきファイルの変数名を順番にチェック
-        const filesToCheck = [
-            'questions_r7_no1',
-            'questions_r7_selective',
-            'questions_r6_no1',
-            'questions_r6_selective',
-            'questions_r5_no1',
-            'questions_r5_selective',
-        ];
-
-        let allSuccess = true;
-        for (const f of filesToCheck) {
-            if (!check(f)) {
-                allSuccess = false;
-                resultsDiv.innerHTML += `<p style="color: red; font-weight: bold;"><strong>→ このファイル (${f}) に問題がある可能性が高いです！</strong></p>`;
-                break; // エラーが見つかった時点で停止
+        // 診断を実行するメインの関数
+        async function runDiagnostics() {
+            const resultsDiv = document.getElementById('results');
+            
+            function log(message, type) {
+                resultsDiv.innerHTML += `<div class="log ${type}">${message}</div>`;
             }
+
+            const filesToLoad = [
+                'data/data_r7_no1.js', 'data/data_r7_selective.js',
+                'data/data_r6_no1.js', 'data/data_r6_selective.js',
+                'data/data_r5_no1.js', 'data/data_r5_selective.js',
+                'data/data_r4_no1.js', 'data/data_r4_selective.js',
+                'data/data_r3_no1.js', 'data/data_r3_selective.js'
+            ];
+
+            log('--- 診断開始 ---', 'info');
+
+            for (const file of filesToLoad) {
+                try {
+                    await loadScript(file);
+                    log(`[成功] ${file} を読み込みました。`, 'success');
+                } catch (error) {
+                    log(`[致命的なエラー] ${error.message}`, 'error');
+                    log('<strong>→ このファイルが原因で、以降の処理が停止しています。</strong><br>ファイル名やパスが正しいか、ファイルの中身にコピーミスがないか確認してください。', 'error');
+                    return; // エラーが出たら診断を終了
+                }
+            }
+
+            log('--- 診断完了 ---', 'info');
+            log('すべてのデータファイルを正常に読み込めました！', 'success');
         }
 
-        if (allSuccess) {
-            resultsDiv.innerHTML += `<hr><h2 style="color: green;">R5, R6, R7のファイルはすべて正常です！</h2>`;
-        }
-
+        // ページが読み込まれたら診断を実行
+        window.onload = runDiagnostics;
     </script>
 </body>
 </html>
