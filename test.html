@@ -2,28 +2,89 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>【デバッグ用】データ読み込みテスト</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>【スマホ用】デバッグページ</title>
+    <style>
+        body { font-family: sans-serif; padding: 1em; line-height: 1.6; }
+        .log { border-left: 5px solid #ccc; padding: 10px; margin: 10px 0; background-color: #f4f4f4; }
+        .success { border-color: green; }
+        .error { border-color: red; color: red; }
+        .warn { border-color: orange; }
+    </style>
 </head>
 <body>
-    <h1>データ読み込みテスト中...</h1>
-    <p>ブラウザの開発者ツール（F12キー）の「コンソール」を確認してください。</p>
+    <h1>データ読み込み診断</h1>
+    <p>以下に、各データファイルの読み込み状況を表示します。</p>
+    <div id="results"></div>
 
-    <!-- 最初に、テスト対象のデータファイルを1つだけ読み込みます -->
+    <!-- ここにデータファイルを順番に読み込みます -->
+    <!-- この順番は index.html と完全に一致させてください -->
     <script src="data/data_r7_no1.js"></script>
-
-    <!-- その直後に、変数が存在するかチェックするスクリプトを実行します -->
+    <script src="data/data_r7_selective.js"></script>
+    <script src="data/data_r6_no1.js"></script>
+    <script src="data/data_r6_selective.js"></script>
+    <script src="data/data_r5_no1.js"></script>
+    <script src="data/data_r5_selective.js"></script>
+    <script src="data/data_r4_no1.js"></script>
+    <script src="data/data_r4_selective.js"></script>
+    <script src="data/data_r3_no1.js"></script>
+    <script src="data/data_r3_selective.js"></script>
+    
+    <!-- 診断用のスクリプト -->
     <script>
-        console.log("--- デバッグ開始 ---");
+        const resultsDiv = document.getElementById('results');
         
-        // questions_r7_no1 という変数が存在するかチェック
-        if (typeof questions_r7_no1 !== 'undefined') {
-            console.log("成功！ 'questions_r7_no1' の読み込みを確認しました。");
-            console.log("中身のデータ:", questions_r7_no1);
-        } else {
-            console.error("失敗... 'questions_r7_no1' という変数が存在しません。");
+        // エラーを画面に表示するための設定
+        window.onerror = function(message, source, lineno, colno, error) {
+            let errorMessage = `
+                <div class="log error">
+                    <strong>致命的なエラーが発生しました！</strong><br>
+                    <strong>ファイル:</strong> ${source.split('/').pop()}<br>
+                    <strong>行番号:</strong> ${lineno}<br>
+                    <strong>エラー内容:</strong> ${message}
+                    <p><strong>ヒント:</strong> このエラーが発生したファイル（上記）の中身に、コピーミスなどの文法エラーがある可能性が非常に高いです。ファイルの中身をもう一度確認してください。</p>
+                </div>`;
+            resultsDiv.innerHTML += errorMessage;
+            return true; // デフォルトのエラー処理を抑制
+        };
+
+        function logToScreen(message, type = 'log') {
+            resultsDiv.innerHTML += `<div class="log ${type}">${message}</div>`;
         }
 
-        console.log("--- デバッグ終了 ---");
+        logToScreen("--- 診断開始 ---");
+
+        const datasets = [
+            'questions_r7_no1', 'questions_r7_selective',
+            'questions_r6_no1', 'questions_r6_selective',
+            'questions_r5_no1', 'questions_r5_selective',
+            'questions_r4_no1', 'questions_r4_selective',
+            'questions_r3_no1', 'questions_r3_selective',
+        ];
+
+        let totalQuestions = 0;
+        let successCount = 0;
+
+        for (const name of datasets) {
+            if (typeof window[name] !== 'undefined' && Array.isArray(window[name])) {
+                const count = window[name].length;
+                logToScreen(`<strong>[成功]</strong> ${name}: 読み込めました (${count}問)`, 'success');
+                totalQuestions += count;
+                successCount++;
+            } else {
+                logToScreen(`<strong>[失敗]</strong> ${name}: 変数が存在しません。`, 'warn');
+            }
+        }
+        
+        if (successCount === 0) {
+             logToScreen(`<strong>[結論]</strong> <strong>1つもデータファイルを読み込めていません。</strong><br>
+                - <strong>原因1:</strong> <code>index.html</code> と同じ階層に <code>data</code> というフォルダがありますか？<br>
+                - <strong>原因2:</strong> <code>index.html</code> の <code>&lt;script src="data/..."&gt;</code> というパスは正しいですか？<br>
+                - <strong>原因3:</strong> ファイル名のスペルは合っていますか？`, 'error');
+        } else {
+            logToScreen(`診断完了: 合計 <strong>${totalQuestions}</strong> 問の問題を認識しました。`, 'success');
+        }
+
     </script>
 </body>
 </html>
