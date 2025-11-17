@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>【最終テスト】シングルファイル版</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif; background-color: #f0f2f5; color: #1a202c; margin: 0; }
+        .container { max-width: 800px; margin: 20px auto; padding: 0 15px; }
+        .card { background-color: white; border-radius: 8px; padding: 24px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 24px; }
+        .hidden { display: none; }
+        textarea { width: 98%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e0; font-size: 16px; margin-top: 8px; resize: vertical; }
+        button { background-color: #4299e1; color: white; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; transition: background-color: 0.2s; }
+        button:hover { background-color: #2b6cb0; }
+        button:disabled { background-color: #a0aec0; cursor: not-allowed; }
+        .control-panel { margin-bottom: 24px; }
+        .control-panel select { padding: 8px 12px; border-radius: 6px; border: 1px solid #cbd5e0; margin-right: 10px; }
+        .explanation, .hint, .ai-advice { border-left: 4px solid #e2e8f0; padding: 16px; margin-top: 20px; background-color: #f7fafc; white-space: pre-wrap; }
+        .header-info { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+        .header-info h2 { font-size: 1.5rem; font-weight: 700; margin: 0; }
+        .header-info .tags { font-size: 0.875rem; color: #718096; }
+        pre { background-color: #edf2f7; padding: 16px; border-radius: 6px; font-family: 'Courier New', Courier, monospace; overflow-x: auto; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header class="mb-6">
+            <h1 class="text-3xl font-bold text-center">aitest - 測量士試験 AI学習ツール</h1>
+        </header>
+
+        <section class="control-panel card">
+            <h2 class="text-lg font-semibold mb-3">問題を選択してください</h2>
+            <div class="flex flex-wrap items-center">
+                <select id="year-select"></select>
+                <select id="set-select"></select>
+                <select id="qnum-select"></select>
+                <button id="start-btn">この問題から開始</button>
+            </div>
+        </section>
+
+        <main id="quiz-container"></main>
+
+        <template id="quiz-card-template">
+            <div class="card">
+                <div class="header-info">
+                    <div>
+                        <h2 id="q-title"></h2>
+                        <p id="q-genre" class="tags"></p>
+                    </div>
+                </div>
+                <div class="question-content">
+                    <p id="q-text" style="white-space: pre-wrap;"></p>
+                    <img id="q-image" class="mt-4" style="display:none; max-width: 100%;">
+                </div>
+                <div class="my-answer-area mt-6">
+                    <label for="user-answer-textarea" class="font-bold text-lg">あなたの解答</label>
+                    <textarea id="user-answer-textarea" rows="8" placeholder="ここに解答を入力..."></textarea>
+                </div>
+                <div class="action-buttons mt-6 flex flex-wrap gap-2">
+                    <button class="hint-btn">ヒント</button>
+                    <button class="answer-btn">模範解答</button>
+                    <button class="ai-btn">この解答でAIに相談する</button>
+                    <button class="memo-btn">私のメモ</button>
+                </div>
+                <div id="hint-content" class="hint hidden"></div>
+                <div id="answer-content" class="explanation hidden"></div>
+                <div id="ai-advice-content" class="ai-advice hidden"></div>
+                <div id="memo-content" class="memo hidden">
+                    <textarea class="memo-textarea" rows="5" placeholder="この問題に関する自分だけの気づきを記録..."></textarea>
+                    <button class="save-memo-btn mt-2">メモを保存</button>
+                </div>
+            </div>
+        </template>
+
+        <div class="navigation mt-6 flex justify-between">
+            <button id="prev-btn">前の問題へ</button>
+            <button id="next-btn">次の問題へ</button>
+        </div>
+    </div>
+
+    <!-- ===== STEP 1: 問題データをここに直接書き込みます ===== -->
+    <script>
+        const questions_r7_no1 = [
+            {
+                "id": "r7_no1_A",
+                "year": "令和7年",
+                "q_set": "必須問題",
+                "q_num": "問A",
+                "type": "fill-in-the-blank-set",
+                "genre": ["測量法規"],
+                "question_text": "次の文は、測量法（昭和24年法律第188号）の条文の一部である。【 ア 】〜【 カ 】に入る語句を語群1から、【 キ 】〜【 サ 】に入る語句を語群2から選び、それぞれ番号を解答せよ。\n\n第一条 この法律は、国若しくは【 ア 】が費用の全部若しくは一部を負担し、若しくは【 イ 】して実施する測量又はこれらの測量の結果を利用する【 ウ 】について、その実施の基準及び実施に必要な権能を定め、【 エ 】を除き、並びに【 オ 】を確保するとともに、測量業を営む者の登録の実施、業務の規制等により,測量業の適正な運営とその健全な発達を図り,もつて各種測量の調整及び測量制度の改善発達に資することを目的とする。\n第三条 この法律において「測量」とは、【 ウ 】をいい、地図の調製及び【 カ 】を含むものとする。\n第六条 この法律において「基本測量及び公共測量以外の測量」とは,基本測量又は公共測量の【 キ 】を使用して実施する基本測量及び公共測量以外の測量(建物に関する測量その他の【 ク 】測量又は小縮尺図の調製その他の高度の精度を必要としない測量で政令で定めるものを除く。)をいう。\n第二十六条 【 ケ 】を実施しようとする者は、国土地理院の長の承認を得て、基本測量の測量標を使用することができる。\n第五十五条の十三 測量業者は、その営業所ごとに【 コ 】を一人以上置かなければならない。\n第五十六条測量業者は、その業務を誠実に行ない、常に【 サ 】の確保に努めなければならない。\n\n【語群1】\n1. 基本測量, 2. 計画, 3. 公共測量, 4. 公共団体, 5. 測量の重複, 6. 測量の信頼性, 7. 測量の正確さ, 8. 測量用機器の製造, 9. 測量用写真の撮影, 10. 地図の重複, 11. 独立行政法人, 12. 土地の測量, 13. 補助, 14. 民間資金を活用\n\n【語群2】\n15. 基本測量以外の測量, 16. 基本測量及び公共測量以外の測量, 17. 局地的, 18. 公共測量, 19. 絶対的, 20. 測量記録, 21. 測量士, 22. 測量士又は測量士補, 23. 測量成果, 24. 測量の信頼性, 25. 測量成果の正確さ, 26. 調査結果",
+                "hint": "測量法の根幹をなす条文からの出題です。\n・第1条「目的」：測量法の目的は「重複の排除」と「正確さの確保」。\n・第3条「測量の定義」：土地の測量には何が含まれるか。\n・第6条「基本測量及び公共測量以外の測量の定義」：何を使って実施する測量か。\n・第26条「測量標の使用」：基本測量以外の測量を行う者が対象。\n・第55条の13「測量士の設置義務」：営業所に置くべき資格者。\n・第56条「誠実義務」：測量業者が常に確保すべきもの。",
+                "answer": {"ア": "4", "イ": "13", "ウ": "12", "エ": "5", "オ": "7", "カ": "9", "キ": "23", "ク": "17", "ケ": "15", "コ": "21", "サ": "25"},
+                "explanation": "測量法の条文に関する知識を問う問題です。第一条（目的）、第三条（定義）、第六条（定義）、第二十六条（測量標の使用）、第五十五条の十三（測量士の設置）、第五十六条（業務の誠実な履行）からの出題です。これらの基本的な条文は正確に覚えておく必要があります。"
+            },
+            // ... 他のR7必須問題
+        ];
+    </script>
+
+    <!-- ===== STEP 2: script.js の中身をここに直接書き込みます ===== -->
+    <script>
+        // script.js の中身をここにペースト
+        document.addEventListener('DOMContentLoaded', () => {
+            const quizContainer = document.getElementById('quiz-container');
+            const quizCardTemplate = document.getElementById('quiz-card-template');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const yearSelect = document.getElementById('year-select');
+            const setSelect = document.getElementById('set-select');
+            const qnumSelect = document.getElementById('qnum-select');
+            const startBtn = document.getElementById('start-btn');
+            let allQuestions = [];
+            let currentQuestionIndex = 0;
+
+            function normalizeYear(yearStr) {
+                if (!yearStr) return '';
+                const match = yearStr.match(/令和(\d+)年/);
+                if (match) { return 'R' + match[1]; }
+                return yearStr;
+            }
+
+            function initializeQuestions() {
+                allQuestions = [];
+                const datasets = ['questions_r7_no1']; // このテストではR7必須のみ
+
+                console.log('=== データセット読み込みログ (シングルファイル) ===');
+                for (const name of datasets) {
+                    if (typeof window[name] !== 'undefined' && Array.isArray(window[name])) {
+                        allQuestions = allQuestions.concat(window[name]);
+                        console.log(`- ${name}: 読み込み成功 (${window[name].length}問)`);
+                    } else {
+                        console.warn(`- ${name}: データが見つかりません`);
+                    }
+                }
+                console.log(`合計 ${allQuestions.length} 問の問題を読み込みました。`);
+
+                allQuestions.forEach(q => {
+                    q.normalizedYear = normalizeYear(q.year);
+                });
+            }
+
+            function initializeControlPanel() {
+                if (allQuestions.length === 0) return;
+                const years = [...new Set(allQuestions.map(q => q.normalizedYear))].sort((a, b) => parseInt(b.slice(1)) - parseInt(a.slice(1)));
+                yearSelect.innerHTML = '';
+                years.forEach(year => {
+                    const option = document.createElement('option');
+                    option.value = year;
+                    option.textContent = year;
+                    yearSelect.appendChild(option);
+                });
+                yearSelect.addEventListener('change', updateSetOptions);
+                setSelect.addEventListener('change', updateQNumOptions);
+                startBtn.addEventListener('click', jumpToQuestion);
+                updateSetOptions();
+            }
+
+            function updateSetOptions() {
+                const selectedYear = yearSelect.value;
+                const setsForYear = [...new Set(allQuestions.filter(q => q.normalizedYear === selectedYear).map(q => q.q_set))];
+                setsForYear.sort((a, b) => (a === '必須問題') ? -1 : (b === '必須問題') ? 1 : a.localeCompare(b));
+                setSelect.innerHTML = '';
+                setsForYear.forEach(set => {
+                    const option = document.createElement('option');
+                    option.value = set;
+                    option.textContent = set;
+                    setSelect.appendChild(option);
+                });
+                updateQNumOptions();
+            }
+
+            function updateQNumOptions() {
+                const selectedYear = yearSelect.value;
+                const selectedSet = setSelect.value;
+                const qnums = [...new Set(allQuestions.filter(q => q.normalizedYear === selectedYear && q.q_set === selectedSet).map(q => q.q_num))];
+                qnums.sort();
+                qnumSelect.innerHTML = '';
+                qnums.forEach(qnum => {
+                    const option = document.createElement('option');
+                    option.value = qnum;
+                    option.textContent = qnum;
+                    qnumSelect.appendChild(option);
+                });
+            }
+            
+            function jumpToQuestion() {
+                const targetIndex = allQuestions.findIndex(q => q.normalizedYear === yearSelect.value && q.q_set === setSelect.value && q.q_num === qnumSelect.value);
+                if (targetIndex !== -1) {
+                    currentQuestionIndex = targetIndex;
+                    displayQuestion(currentQuestionIndex);
+                } else {
+                    alert('選択された問題が見つかりません。');
+                }
+            }
+
+            function displayQuestion(index) {
+                // displayQuestion関数の中身は変更ないので省略します
+                 quizContainer.innerHTML = '';
+                const q = allQuestions[index];
+                if (!q) {
+                    quizContainer.innerHTML = '<p>問題の読み込みに失敗しました。</p>';
+                    return;
+                }
+                const card = quizCardTemplate.content.cloneNode(true);
+                card.querySelector('#q-title').textContent = `[${q.normalizedYear}] ${q.q_set} ${q.q_num}`;
+                card.querySelector('#q-genre').textContent = (q.genre || []).join(' / ');
+                card.querySelector('#q-text').textContent = q.question_text;
+                const qImage = card.querySelector('#q-image');
+                if (q.question_image) {
+                    qImage.src = q.question_image;
+                    qImage.style.display = 'block';
+                } else {
+                    qImage.style.display = 'none';
+                }
+                const answerContent = card.querySelector('#answer-content');
+                if (q.type && q.type.includes('fill-in-the-blank') && q.answer) {
+                    let answerHtml = '<strong>【模範解答】</strong><br><br>';
+                    for (const [key, value] of Object.entries(q.answer)) {
+                        answerHtml += `<p><strong>${key}:</strong> ${value}</p>`;
+                    }
+                    if (q.explanation) {
+                        answerHtml += `<br><strong>【解説】</strong><br><p>${q.explanation}</p>`;
+                    }
+                    answerContent.innerHTML = answerHtml;
+                } else {
+                    let processHTML = q.answer_process ? `<strong>【計算過程】</strong><br><pre>${q.answer_process}</pre><br>` : '';
+                    let answerHTML = `<strong>【最終解答】</strong><br><p style="font-size: 1.2em; color: blue;">${q.answer_final || q.answer_text || '解答がありません'}</p>`;
+                    let explanationHTML = q.explanation ? `<br><strong>【解説】</strong><br><p>${q.explanation}</p>`: '';
+                    answerContent.innerHTML = processHTML + answerHTML + explanationHTML;
+                }
+                card.querySelector('#hint-content').textContent = `【ヒント】\n${q.hint || 'この問題にはヒントがありません。'}`;
+                const hintBtn = card.querySelector('.hint-btn');
+                const answerBtn = card.querySelector('.answer-btn');
+                const memoBtn = card.querySelector('.memo-btn');
+                const saveMemoBtn = card.querySelector('.save-memo-btn');
+                hintBtn.addEventListener('click', () => card.querySelector('#hint-content').classList.toggle('hidden'));
+                answerBtn.addEventListener('click', () => card.querySelector('#answer-content').classList.toggle('hidden'));
+                memoBtn.addEventListener('click', () => card.querySelector('#memo-content').classList.toggle('hidden'));
+                const memoKey = `aitest_memo_${q.id}`;
+                const memoTextarea = card.querySelector('.memo-textarea');
+                memoTextarea.value = localStorage.getItem(memoKey) || '';
+                saveMemoBtn.addEventListener('click', () => {
+                    localStorage.setItem(memoKey, memoTextarea.value);
+                    alert(`「${q.id}」のメモを保存しました！`);
+                    card.querySelector('#memo-content').classList.add('hidden');
+                });
+                // AI機能はテストのため省略
+                card.querySelector('.ai-btn').style.display = 'none';
+
+                quizContainer.appendChild(card);
+                updateNavButtons();
+            }
+            
+            function goToNextQuestion() {
+                if (currentQuestionIndex < allQuestions.length - 1) {
+                    currentQuestionIndex++;
+                    displayQuestion(currentQuestionIndex);
+                }
+            }
+
+            function goToPrevQuestion() {
+                if (currentQuestionIndex > 0) {
+                    currentQuestionIndex--;
+                    displayQuestion(currentQuestionIndex);
+                }
+            }
+
+            function updateNavButtons() {
+                prevBtn.disabled = currentQuestionIndex === 0;
+                nextBtn.disabled = currentQuestionIndex >= allQuestions.length - 1;
+            }
+
+            prevBtn.addEventListener('click', goToPrevQuestion);
+            nextBtn.addEventListener('click', goToNextQuestion);
+            
+            // ----- 初期化処理の実行 -----
+            initializeQuestions();
+            initializeControlPanel();
+            if (allQuestions.length > 0) {
+                displayQuestion(0);
+            } else {
+                quizContainer.innerHTML = '<p>問題データが読み込まれていません。</p>';
+            }
+        });
+    </script>
+</body>
+</html>
