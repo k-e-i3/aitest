@@ -236,10 +236,9 @@ async function getAIAdvice(question, userAnswer) {
     }
 
     // 利用可能モデル（あなたの環境）
-    const MODEL_NAME = "models/gemini-2.5-flash";
-
-    const API_URL = `https://generativelanguage.googleapis.com/v1/${MODEL_NAME}:generateContent?key=${API_KEY}`;
-
+    const MODEL_NAME =　"models/gemini-2.5-flash-lite"; // "models/gemini-2.5-flash";
+    //const API_URL = `https://generativelanguage.googleapis.com/v1/${MODEL_NAME}:generateContent?key=${API_KEY}`;
+  
     // --- 正答の準備 ---
     let correctAnswerText = '';
     if (question.answer) {
