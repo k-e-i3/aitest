@@ -1,6 +1,6 @@
 // data/data_r4_no1.js
 
-const questions_r4_no1 = [
+const window.questions_r4_no1 = [
   {
     "id": "r4_no1_A",
     "year": "令和4年",
