@@ -1,3 +1,4 @@
+
 // script.js (最終修正版)
 
 // DOMが完全に読み込まれてから、すべての処理を開始する
@@ -228,36 +229,99 @@ document.addEventListener('DOMContentLoaded', () => {
         quizContainer.appendChild(card);
         updateNavButtons();
     }
-
-    async function getAIAdvice(question, userAnswer) {
-        if (typeof API_KEY === 'undefined' || API_KEY === 'YOUR_GEMINI_API_KEY_HERE') {
-            throw new Error("APIキーがconfig.jsに設定されていません。");
-        }
-        const API_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
-        
-        let correctAnswerText = '';
-        if (question.answer) {
-            correctAnswerText = Object.entries(question.answer).map(([key, value]) => `${key}: ${value}`).join('\n');
-        } else {
-            correctAnswerText = question.answer_text || question.answer_final || '';
-        }
-
-        const prompt = `あなたは測量士国家試験の非常に優秀な指導者です。以下の問題に対する受験生の解答を評価し、励ましながら具体的なアドバイスをしてください。\n\n# 問題\n${question.question_text}\n\n# 模範解答\n${correctAnswerText}\n\n# 受験生の解答\n${userAnswer}\n\n# アドバイスの形式\n1. まず「素晴らしいですね！」「惜しい！」など、ポジティブな一言で始めます。\n2. 良い点と改善点を、それぞれ具体的に指摘します。\n3. 特に間違っている箇所については、なぜそうなるのかを優しく解説してください。\n4. 最後に、次につながる学習のヒントを簡潔に示してください。`;
-
-        const response = await fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-        });
-        
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(`API Error: ${response.status} ${JSON.stringify(errorData)}`);
-        }
-        
-        const data = await response.json();
-        return data.candidates[0].content.parts[0].text;
+    
+async function getAIAdvice(question, userAnswer) {
+    if (typeof API_KEY === 'undefined' || API_KEY === 'YOUR_GEMINI_API_KEY_HERE') {
+        throw new Error("APIキーがconfig.jsに設定されていません。");
     }
+
+    // 利用可能モデル（あなたの環境）
+    const MODEL_NAME = "models/gemini-2.5-flash";
+
+    const API_URL = `https://generativelanguage.googleapis.com/v1/${MODEL_NAME}:generateContent?key=${API_KEY}`;
+
+    // --- 正答の準備 ---
+    let correctAnswerText = '';
+    if (question.answer) {
+        correctAnswerText = Object.entries(question.answer)
+            .map(([key, value]) => `${key}: ${value}`)
+            .join('\n');
+    } else {
+        correctAnswerText = question.answer_text || question.answer_final || '';
+    }
+
+    // --- プロンプト ---
+    const prompt = `あなたは測量士国家試験の非常に優秀な指導者です。以下の問題に対する受験生の解答を評価し、励ましながら具体的なアドバイスをしてください。
+
+# 問題
+${question.question_text}
+
+# 模範解答
+${correctAnswerText}
+
+# 受験生の解答
+${userAnswer}
+
+# アドバイスの形式
+1. まずポジティブな一言で始めます。
+2. 良い点と改善点をそれぞれ具体的に述べます。
+3. 誤っている箇所は理由とともに丁寧に解説します。
+4. 最後に次につながるワンポイント学習のヒントを提示します。`;
+
+    // --- API 呼び出し ---
+    const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            contents: [{
+                parts: [{ text: prompt }]
+            }]
+        })
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`API Error: ${response.status} ${JSON.stringify(errorData)}`);
+    }
+
+    const data = await response.json();
+
+    // --- 最新モデルの返り値すべてに対応 ---
+    return extractAIText(data);
+}
+
+/* ---------------------------------------------
+   返り値の形式が複数あるため安全に抽出する
+--------------------------------------------- */
+function extractAIText(data) {
+    try {
+        // 基本形式（2025 年時点の標準）
+        if (data?.candidates?.[0]?.content?.parts?.[0]?.text) {
+            return data.candidates[0].content.parts[0].text;
+        }
+
+        // 一部モデルの別形式（output_text）
+        if (data?.candidates?.[0]?.output_text) {
+            return data.candidates[0].output_text;
+        }
+
+        // さらに別形式（Gemini 2.5 Pro 系など）
+        if (data?.candidates?.[0]?.content?.parts) {
+            const combined = data.candidates[0].content.parts
+                .map(p => p.text || '')
+                .join('');
+            if (combined.trim() !== '') return combined;
+        }
+
+        // どれにも当てはまらない → デバッグ用に全体返す
+        return JSON.stringify(data, null, 2);
+
+    } catch (e) {
+        return "AIレスポンスの解析に失敗しました。";
+    }
+}
 
     function goToNextQuestion() {
         if (currentQuestionIndex < allQuestions.length - 1) {
