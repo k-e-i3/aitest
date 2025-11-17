@@ -83,21 +83,22 @@
         </div>
     </div>
 
-    <!-- JavaScriptファイルを読み込み -->
-    <script src="config.js"></script>
+    <!-- JavaScriptファイルを読み込み (すべてに defer を追加) -->
+    <script src="config.js" defer></script>
+
     <!-- 問題データ -->
-    <script src="data/data_r7_no1.js"></script>
-    <script src="data/data_r7_selective.js"></script>
-    <script src="data/data_r6_no1.js"></script>
-    <script src="data/data_r6_selective.js"></script>
-    <script src="data/data_r5_no1.js"></script>
-    <script src="data/data_r5_selective.js"></script>
-    <script src="data/data_r4_no1.js"></script>
-    <script src="data/data_r4_selective.js"></script>
-    <script src="data/data_r3_no1.js"></script>
-    <script src="data/data_r3_selective.js"></script>
-    <!-- アプリ本体のロジック -->
-    <script src="script.js"></script>
+    <script src="data/data_r7_no1.js" defer></script>
+    <script src="data/data_r7_selective.js" defer></script>
+    <script src="data/data_r6_no1.js" defer></script>
+    <script src="data/data_r6_selective.js" defer></script>
+    <script src="data/data_r5_no1.js" defer></script>
+    <script src="data/data_r5_selective.js" defer></script>
+    <script src="data/data_r4_no1.js" defer></script>
+    <script src="data/data_r4_selective.js" defer></script>
+    <script src="data/data_r3_no1.js" defer></script>
+    <script src="data/data_r3_selective.js" defer></script>
     
+    <!-- アプリ本体のロジック (ここにも defer を追加) -->
+    <script src="script.js" defer></script>
 </body>
 </html>
