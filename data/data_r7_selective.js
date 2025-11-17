@@ -1,4 +1,4 @@
-const window.questions_r7_selective = [
+window.questions_r7_selective = [
   {
     "id": "r7_no2_A",
     "year": "令和7年",
